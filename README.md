@@ -40,7 +40,7 @@ Different crops suit different playstyles. Choose wisely based on your activity:
 -   **Water**: Keep your soil wet! Watered crops grow faster and are less likely to wither.
 -   **Solana Integration**: Connect your wallet to secure your assets and participate in the on-chain economy.
 
-## � Pro Tips
+## Pro Tips
 -   **Always Be Growing**: Never let a tile sit empty. An empty tile is wasted potential.
 -   **Plan Your Day**: Use Short crops when you can play, and switch to Long crops before you sign off.
 -   **Task Focus**: Check the Task Board daily. Completing tasks often rewards you with bonus Coins or XP that speeds up your progression.
