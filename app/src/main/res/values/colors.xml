@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="gray_title">#808080</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    
+    <!-- Game Theme Colors -->
+    <color name="sky_blue">#87CEEB</color>
+    <color name="light_cyan">#E0F7FA</color>
+    <color name="grass_green_light">#66BB6A</color>
+    <color name="grass_green_dark">#4CAF50</color>
+    <color name="btn_green_start">#66BB6A</color>
+    <color name="btn_green_end">#43A047</color>
+    <color name="text_brown">#3E2723</color>
+    <color name="text_light_brown">#795548</color>
+    <color name="card_text_primary">#3E2723</color>
+    <color name="card_bg">#E6FFFFFF</color> <!-- 90% opacity white -->
+</resources>

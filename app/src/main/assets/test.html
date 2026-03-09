@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Bridge Test</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        button { padding: 10px 20px; font-size: 16px; margin: 10px 0; display: block; }
+        .result { margin-top: 20px; color: blue; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>Android JS Bridge Test</h2>
+    
+    <button onclick="showAndroidToast('Hello from JS!')">Show Toast</button>
+    <button onclick="getAndroidVersion()">Get App Version</button>
+    <hr/>
+    <h3>Solana Wallet</h3>
+    <button onclick="connectWallet()">Connect Wallet</button>
+    <button onclick="signMessage()">Sign Message</button>
+    <button onclick="verifySignature()">Verify Signature</button>
+    <button onclick="sendTransaction()">Send Transaction</button>
+    
+    <hr/>
+    <h3>Transfer SOL</h3>
+    <input type="text" id="destinationAddress" placeholder="Destination Address" value="F5AkGXPPuSV2Fu4de75JwFrkSsV4aWxrNWFsWkcDqgiU" style="width: 100%; margin-bottom: 10px;">
+    <input type="number" id="lamportsAmount" placeholder="Amount (Lamports)" value="1000000" style="width: 100%; margin-bottom: 10px;">
+    <button onclick="transferSol()">Transfer SOL</button>
+    <div id="transferResult" class="result"></div>
+
+    <hr/>
+    <h3>Token Balance</h3>
+    <input type="text" id="mintAddress" placeholder="Token Mint Address (Use 'SOL' for native balance)" value="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" style="width: 100%; margin-bottom: 10px;">
+    <button onclick="getTokenBalance()">Get Balance</button>
+    <div id="balanceResult" class="result"></div>
+
+    <div id="versionResult" class="result"></div>
+    <div id="walletAddress" class="result"></div>
+    <div id="signResult" class="result"></div>
+    <div id="sendResult" class="result"></div>
+    <div id="verifyResult" class="result"></div>
+
+    <script type="text/javascript">
+        var lastSignature = null;
+
+        function onWalletConnected(address) {
+            document.getElementById("walletAddress").innerText = "Connected Address: " + address;
+        }
+
+        function onMessageSigned(signature) {
+            document.getElementById("signResult").innerText = "Message Signature: " + signature;
+            lastSignature = signature;
+        }
+
+        function onTransactionSent(signature) {
+            document.getElementById("sendResult").innerText = "Transaction Signature: " + signature;
+        }
+        
+        function onSignatureVerified(address) {
+            document.getElementById("verifyResult").innerText = "Verified Address: " + address;
+        }
+
+        function onTransferResult(result) {
+            document.getElementById("transferResult").innerText = "Transfer Result: " + result;
+        }
+
+        function onGetBalanceResult(result) {
+            document.getElementById("balanceResult").innerText = "Balance: " + result;
+        }
+
+        function connectWallet() {
+            if (typeof seeker !== "undefined" && seeker.connectWallet) {
+                seeker.connectWallet("callback_1");
+            } else {
+                alert("seeker interface not found!");
+            }
+        }
+
+        function signMessage() {
+            if (typeof seeker !== "undefined" && seeker.signMessage) {
+                // Base64 encoded "Hello Solana" -> SGVsbG8gU29sYW5h
+                seeker.signMessage("SGVsbG8gU29sYW5h");
+            }
+        }
+        
+        function verifySignature() {
+            if (typeof seeker !== "undefined" && seeker.verifySignature) {
+                if (lastSignature) {
+                    // Pass the same message "Hello Solana" -> SGVsbG8gU29sYW5h
+                    seeker.verifySignature(lastSignature, "SGVsbG8gU29sYW5h");
+                } else {
+                    alert("Please sign a message first.");
+                }
+            }
+        }
+
+        
+        function sendTransaction() {
+            if (typeof seeker !== "undefined" && seeker.sendTransaction) {
+                // Dummy Base64 transaction (not valid, just for demo call)
+                seeker.sendTransaction("AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACd");
+            }
+        }
+
+        function transferSol() {
+            var destination = document.getElementById("destinationAddress").value;
+            var amount = document.getElementById("lamportsAmount").value;
+            if (destination && amount) {
+                if (typeof seeker !== "undefined" && seeker.transferSol) {
+                    seeker.transferSol(destination, amount);
+                } else {
+                    alert("seeker interface not found!");
+                }
+            } else {
+                alert("Please enter destination address and amount.");
+            }
+        }
+
+        function getTokenBalance() {
+            var mint = document.getElementById("mintAddress").value;
+            if (mint) {
+                if (typeof seeker !== "undefined" && seeker.getTokenBalance) {
+                    seeker.getTokenBalance(mint);
+                } else {
+                    alert("seeker interface not found!");
+                }
+            } else {
+                alert("Please enter mint address.");
+            }
+        }
+
+        function showAndroidToast(toast) {
+            if (typeof seeker !== "undefined" && seeker.showToast) {
+                seeker.showToast(toast);
+            } else {
+                alert("seeker interface not found!");
+            }
+        }
+
+        function getAndroidVersion() {
+            if (typeof seeker !== "undefined" && seeker.getAppVersion) {
+                var version = seeker.getAppVersion();
+                document.getElementById("versionResult").innerText = "App Version: " + version;
+            } else {
+                document.getElementById("versionResult").innerText = "seeker interface not found!";
+            }
+        }
+    </script>
+</body>
+</html>

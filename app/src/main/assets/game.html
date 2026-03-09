@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Farm Simulation</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="css/game.css">
+    <link rel="stylesheet" href="css/cursor.css">
+
+</head>
+<body>
+
+    <div id="game-container">
+        
+        <!-- Sky Clouds -->
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+
+        <!-- Billboard -->
+        <div id="billboard" onclick="openBillboardEdit()">
+            <div class="pillar-left"></div>
+            <div class="pillar-right"></div>
+            <div class="billboard-content" id="billboard-text">
+                Welcome to<br>Seeker Farm
+            </div>
+        </div>
+
+        <!-- Game World -->
+        <div id="farm-viewport">
+            <canvas id="farm-canvas"></canvas>
+        </div>
+
+        <!-- UI Layer -->
+        <div id="modal-overlay"></div>
+        <div id="ui-layer">
+            <div id="loading-overlay" class="ui-element" style="display: none;">Loading...</div>
+            
+            <!-- Back to Home Button (Hidden by default) -->
+            <div id="back-home-btn" class="ui-element" onclick="enterOwnerMode()" style="display: none;">
+                <span class="icon">🏠</span>
+                <span>Back Home</span>
+            </div>
+
+            <!-- Top Left: Profile -->
+            <div id="top-left-panel" class="ui-element">
+                <div class="avatar"></div>
+                <div class="stats">
+                    <div class="level-bar" id="level-display"></div>
+                    <div class="resources">
+                        <div class="res-item"><div class="res-icon gem"></div> <span id="gem-display"></span></div>
+                        <div class="res-item"><div class="res-icon coin"></div> <span id="coin-display"></span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Right: Menu -->
+            <div id="top-right-panel" class="ui-element">
+                <div class="menu-btn" onclick="toggleModal('shop-modal')">🏪</div>
+                <div class="menu-btn" onclick="toggleModal('tasks-modal')" style="display: none;">📋</div>
+                <div class="menu-btn" onclick="toggleModal('intro-modal')">📖</div>
+            </div>
+
+            <!-- Bottom Left: Tools -->
+            <div id="bottom-bar" class="ui-element">
+                <div class="tool-slot" onclick="selectTool('hoe')">⛏️</div>
+                <div class="tool-slot" onclick="selectTool('water')">🚿</div>
+                <div class="tool-slot" onclick="selectTool('seed')">🌱</div>
+                <div class="tool-slot" onclick="selectTool('bag')">🎒</div>
+            </div>
+        </div>
+
+        <!-- Modals -->
+        <div id="shop-modal" class="modal ui-element">
+            <div class="modal-header">
+                <div class="modal-title">Shop</div>
+                <div class="close-btn" onclick="toggleModal('shop-modal')">X</div>
+            </div>
+            <div class="modal-content" id="shop-list">
+                <!-- Items rendered by JS -->
+            </div>
+        </div>
+
+        <div id="tasks-modal" class="modal ui-element">
+            <div class="modal-header">
+                <div class="modal-title">Tasks</div>
+                <div class="close-btn" onclick="toggleModal('tasks-modal')">X</div>
+            </div>
+            <div class="modal-content">
+                <div style="text-align: center; padding: 20px; color: #5D4037;">Loading tasks...</div>
+            </div>
+        </div>
+
+        <!-- Introduction Modal -->
+        <div id="intro-modal" class="modal ui-element intro-modal-style">
+            <div class="modal-header">
+                <div class="modal-title">Guide</div>
+                <div class="close-btn" onclick="toggleModal('intro-modal')">X</div>
+            </div>
+            <div class="modal-content intro-content" style="overflow-y: auto; max-height: 80vh;">
+                <h3>1. Level Experience</h3>
+                <p>The level system uses a progressive experience model. Max Level: 60.</p>
+                <div style="background: #D7CCC8; padding: 10px; border-radius: 5px; font-family: monospace; font-weight: bold; text-align: center; margin: 10px 0;">Exp = floor(100 + 10*(L-1) + 0.4*(L-1)^2)</div>
+                <ul>
+                    <li>Early levels are fast (Lvl 1→2 needs 100 Exp).</li>
+                    <li>Total Exp to Max Level (60) is approx 62,000.</li>
+                </ul>
+                
+                <h3>Experience Table</h3>
+                <table class="intro-table">
+                    <tr><th>Lvl</th><th>Exp</th><th>Lvl</th><th>Exp</th><th>Lvl</th><th>Exp</th></tr>
+                    <tr><td>1</td><td>100</td><td>21</td><td>370</td><td>41</td><td>840</td></tr>
+                    <tr><td>2</td><td>110</td><td>22</td><td>387</td><td>42</td><td>864</td></tr>
+                    <tr><td>3</td><td>121</td><td>23</td><td>404</td><td>43</td><td>889</td></tr>
+                    <tr><td>4</td><td>133</td><td>24</td><td>422</td><td>44</td><td>914</td></tr>
+                    <tr><td>5</td><td>146</td><td>25</td><td>440</td><td>45</td><td>940</td></tr>
+                    <tr><td>6</td><td>160</td><td>26</td><td>459</td><td>46</td><td>966</td></tr>
+                    <tr><td>7</td><td>174</td><td>27</td><td>478</td><td>47</td><td>993</td></tr>
+                    <tr><td>8</td><td>189</td><td>28</td><td>498</td><td>48</td><td>1020</td></tr>
+                    <tr><td>9</td><td>205</td><td>29</td><td>518</td><td>49</td><td>1048</td></tr>
+                    <tr><td>10</td><td>221</td><td>30</td><td>539</td><td>50</td><td>1076</td></tr>
+                    <tr><td>11</td><td>238</td><td>31</td><td>560</td><td>51</td><td>1105</td></tr>
+                    <tr><td>12</td><td>256</td><td>32</td><td>582</td><td>52</td><td>1134</td></tr>
+                    <tr><td>13</td><td>274</td><td>33</td><td>604</td><td>53</td><td>1164</td></tr>
+                    <tr><td>14</td><td>293</td><td>34</td><td>627</td><td>54</td><td>1194</td></tr>
+                    <tr><td>15</td><td>312</td><td>35</td><td>650</td><td>55</td><td>1225</td></tr>
+                    <tr><td>16</td><td>332</td><td>36</td><td>674</td><td>56</td><td>1256</td></tr>
+                    <tr><td>17</td><td>353</td><td>37</td><td>698</td><td>57</td><td>1288</td></tr>
+                    <tr><td>18</td><td>374</td><td>38</td><td>723</td><td>58</td><td>1320</td></tr>
+                    <tr><td>19</td><td>396</td><td>39</td><td>748</td><td>59</td><td>1353</td></tr>
+                    <tr><td>20</td><td>418</td><td>40</td><td>774</td><td>60</td><td>Max</td></tr>
+                </table>
+
+                <h3>2. Seeds & Shop</h3>
+                <p>Crops are balanced for economic stability.</p>
+                <table class="intro-table">
+                    <tr><th>Name</th><th>Price</th><th>Time</th><th>Yield</th></tr>
+                    <tr><td>Carrot 🥕</td><td>10</td><td>2h</td><td>3</td></tr>
+                    <tr><td>Potato 🥔</td><td>15</td><td>3h</td><td>4</td></tr>
+                    <tr><td>Tomato 🍅</td><td>20</td><td>4h</td><td>5</td></tr>
+                    <tr><td>Eggplant 🍆</td><td>25</td><td>5h</td><td>6</td></tr>
+                    <tr><td>Pea 🫛</td><td>30</td><td>6h</td><td>7</td></tr>
+                    <tr><td>Chili 🌶️</td><td>35</td><td>7h</td><td>8</td></tr>
+                    <tr><td>Corn 🌽</td><td>80</td><td>12h</td><td>12</td></tr>
+                    <tr><td>Pumpkin 🎃</td><td>200</td><td>24h</td><td>20</td></tr>
+                    <tr><td>Strawberry 🍓</td><td>45</td><td>8h</td><td>8</td></tr>
+                    <tr><td>Watermelon 🍉</td><td>120</td><td>16h</td><td>15</td></tr>
+                    <tr><td>Grape 🍇</td><td>150</td><td>18h</td><td>16</td></tr>
+                    <tr><td>Apple 🍎</td><td>180</td><td>20h</td><td>18</td></tr>
+                    <tr><td>Banana 🍌</td><td>220</td><td>22h</td><td>20</td></tr>
+                    <tr><td>Peach 🍑</td><td>260</td><td>24h</td><td>22</td></tr>
+                    <tr><td>Orange 🍊</td><td>190</td><td>20h</td><td>19</td></tr>
+                    <tr><td>Pomegranate 🍒</td><td>300</td><td>26h</td><td>24</td></tr>
+                    <tr><td>Pink Rose 🌸</td><td>60</td><td>8h</td><td>3</td></tr>
+                    <tr><td>Blue Rose 🌀</td><td>400</td><td>36h</td><td>4</td></tr>
+                    <tr><td>Hyacinth 🪻</td><td>65</td><td>8h</td><td>3</td></tr>
+                    <tr><td>Daisy 🌼</td><td>40</td><td>6h</td><td>2</td></tr>
+                    <tr><td>Lily 🪷</td><td>120</td><td>14h</td><td>5</td></tr>
+                    <tr><td>Gerbera 🌻</td><td>70</td><td>9h</td><td>3</td></tr>
+                    <tr><td>Lavender 🌾</td><td>80</td><td>10h</td><td>4</td></tr>
+                    <tr><td>Cactus 🌵</td><td>200</td><td>36h</td><td>2</td></tr>
+                    <tr><td>Orchid 🌺</td><td>250</td><td>24h</td><td>3</td></tr>
+                    <tr><td>Tulip 🌷</td><td>85</td><td>10h</td><td>4</td></tr>
+                </table>
+
+                <h3>3. Economic Model</h3>
+                <h4>Land Unlock</h4>
+                <ul>
+                    <li><strong>Level 1:</strong> 1 Land</li>
+                    <li><strong>Every 5 Levels:</strong> +1 Land</li>
+                    <li><strong>Level 55:</strong> Max 12 Lands (All Unlocked)</li>
+                </ul>
+
+                <h4>Profit & Yield</h4>
+                <div style="background: #D7CCC8; padding: 10px; border-radius: 5px; font-family: monospace; font-weight: bold; text-align: center; margin: 10px 0;">P = (C * (1 + 0.12 * T)) / Y</div>
+                <ul>
+                    <li><strong>P:</strong> Base Sell Price per unit</li>
+                    <li><strong>C:</strong> Seed Cost (Price)</li>
+                    <li><strong>T:</strong> Harvest Time (Hours)</li>
+                    <li><strong>Y:</strong> Yield Quantity</li>
+                    <li><strong>Exp:</strong> 1 Exp per 5 Coins spent.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Seed Selection Modal -->
+        <div id="seed-modal" class="modal ui-element">
+            <div class="warehouse-header">
+                <div class="modal-title-img">My Seeds</div>
+                <div class="close-btn" style="position: absolute; right: 15px; top: 15px; color: white; font-size: 20px;" onclick="toggleModal('seed-modal')">X</div>
+            </div>
+            <div class="warehouse-body">
+                <div id="seed-grid" class="grid-container" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                    <!-- Seeds injected by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Hoe Confirmation Modal -->
+        <div id="hoe-confirm-modal" class="modal ui-element" style="height: auto; min-height: 200px;">
+            <div class="warehouse-header" style="background: #E57373;">
+                <div class="modal-title-img">Clear Crop</div>
+            </div>
+            <div class="warehouse-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                <div style="font-size: 18px; color: #5D4037; margin-bottom: 20px;">Are you sure you want to clear this crop?<br><span style="font-size: 14px; color: #8D6E63;">(Cannot be undone)</span></div>
+                <div style="display: flex; gap: 20px;">
+                    <button class="btn-leave" style="background: #E0E0E0; color: #5D4037;" onclick="toggleModal('hoe-confirm-modal')">Cancel</button>
+                    <button class="btn-leave" style="background: #E57373;" onclick="confirmHoe()">Confirm</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Warehouse Modal -->
+        <div id="warehouse-modal" class="modal ui-element">
+            <div class="warehouse-header">
+                <div class="modal-title-img">My Warehouse</div>
+            </div>
+            <div class="warehouse-tabs">
+                <div class="tab active" onclick="switchTab('seed')">Seed</div>
+                <div class="tab" onclick="switchTab('material')">Material</div>
+                <div class="tab" onclick="switchTab('tool')">Tool</div>
+                <div class="tab" onclick="switchTab('chest')">Chest</div>
+                <div class="tab" onclick="switchTab('other')">Other</div>
+            </div>
+            <div class="warehouse-body">
+                <div id="warehouse-grid" class="grid-container">
+                    <!-- Items injected by JS -->
+                </div>
+            </div>
+            <div class="warehouse-footer">
+                <button class="btn-leave" onclick="toggleModal('warehouse-modal')">Close</button>
+            </div>
+        </div>
+
+        <!-- Sell Modal -->
+        <div id="sell-modal" class="modal ui-element">
+            <div class="sell-header">
+                <div class="modal-title-img">Sell</div>
+            </div>
+            <div class="sell-content">
+                <div class="sell-item-info">
+                    <div class="item-slot large">
+                        <div class="item-icon" id="sell-item-icon">🥕</div>
+                        <div class="item-count-badge" id="sell-item-owned">2</div>
+                    </div>
+                    <div class="item-details">
+                        <div class="item-name" id="sell-item-name">Carrot</div>
+                        <div class="item-price-info">
+                            <span class="max-btn" onclick="setMaxSell()">Max</span>
+                            <span>Unit Price: <span id="sell-unit-price">14</span> Coins</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quantity-control">
+                    <button class="qty-btn" onclick="adjustSellQty(-1)">-</button>
+                    <div class="qty-display" id="sell-qty">1</div>
+                    <button class="qty-btn" onclick="adjustSellQty(1)">+</button>
+                    <div class="total-income">
+                        <span class="coin-icon">💰</span>
+                        <span>Total: <span id="sell-total-price">14</span></span>
+                    </div>
+                </div>
+
+                <div class="sell-actions">
+                    <button class="btn-confirm" onclick="confirmSell()">Confirm</button>
+                    <button class="btn-cancel" onclick="toggleModal('sell-modal')">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Buy Modal -->
+        <div id="buy-modal" class="modal ui-element">
+            <div class="sell-header" style="background: #66BB6A; padding: 10px;">
+                <div class="modal-title-img" id="buy-modal-title" style="font-size: 16px;">Buy</div>
+            </div>
+            <div class="sell-content compact">
+                <div class="sell-item-info">
+                    <div class="item-slot large">
+                        <div class="item-icon" id="buy-item-icon">🌱</div>
+                        <div class="item-count-badge" id="buy-item-owned">0</div>
+                    </div>
+                    <div class="item-details">
+                        <div class="item-name" id="buy-item-name">Seed</div>
+                        <div class="item-price-info">
+                            <span class="max-btn" onclick="setBuyMax()">Max</span>
+                            <span>Price: <span id="buy-unit-price">10</span> Coins</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quantity-control">
+                    <button class="qty-btn" onclick="adjustBuyQty(-1)">-</button>
+                    <div class="qty-display" id="buy-qty">1</div>
+                    <button class="qty-btn" onclick="adjustBuyQty(1)">+</button>
+                    <div class="total-income">
+                        <span class="coin-icon">💰</span>
+                        <span>Total: <span id="buy-total-price">10</span></span>
+                    </div>
+                </div>
+
+                <div class="sell-actions">
+                    <button class="btn-confirm" onclick="confirmBuy()">Buy</button>
+                    <button class="btn-cancel" onclick="returnToShop()">Back</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Billboard Edit Modal -->
+        <div id="billboard-modal" class="modal ui-element">
+            <div class="modal-header">
+                <div class="modal-title">Edit Billboard</div>
+                <div class="close-btn" onclick="toggleModal('billboard-modal')">X</div>
+            </div>
+            <div class="modal-content" style="display: flex; flex-direction: column; gap: 15px; padding: 20px;">
+                <textarea id="billboard-input" rows="4" maxlength="60" style="width: 100%; padding: 10px; border-radius: 8px; border: 2px solid #D7CCC8; font-size: 16px; font-family: inherit; resize: none; box-sizing: border-box;" placeholder="Enter text... (Max 4 lines, 60 chars)"></textarea>
+                <button class="btn-confirm" onclick="saveBillboardText()">Save</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="js/game.js"></script>
+</body>
+</html>

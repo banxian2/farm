@@ -1,0 +1,16 @@
+<svg width="512" height="512" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background (White Circle) -->
+    <path fill="#FFFFFF" d="M12,0 A12,12 0 1,0 12,24 A12,12 0 1,0 12,0 Z" />
+
+    <!-- Plant Group (Scaled 1.35x around center 12,12) -->
+    <g transform="translate(12,12) scale(1.35) translate(-12,-12)">
+        <!-- Stem (Dark Green) -->
+        <path fill="#558B2F" d="M11,10 h2 v10 h-2 Z" />
+
+        <!-- Left Leaf (Light Green) -->
+        <path fill="#8BC34A" d="M12,10 C12,10 6,10 5,5 C5,2 12,5 12,10 Z" />
+
+        <!-- Right Leaf (Light Green, slightly brighter) -->
+        <path fill="#9CCC65" d="M12,10 C12,10 18,10 19,5 C19,2 12,5 12,10 Z" />
+    </g>
+</svg>

@@ -1,0 +1,21 @@
+/* Custom Cursors for Tools */
+/* Using URL-encoded SVG Data URIs for compatibility */
+
+/* Hoe (Pickaxe) Emoji: ⛏️ */
+.tool-hoe {
+    cursor: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Ctext x='0' y='40' font-size='40'%3E%E2%9B%8F%EF%B8%8F%3C/text%3E%3C/svg%3E") 0 30, auto !important;
+}
+
+/* Seed (Seedling) Emoji: 🌱 */
+.tool-seed {
+    cursor: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Ctext x='0' y='40' font-size='40'%3E%F0%9F%8C%B1%3C/text%3E%3C/svg%3E") 0 30, auto !important;
+}
+
+/* Force cursor on all interactive elements when tool is active */
+.tool-hoe, .tool-hoe * {
+    cursor: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Ctext x='0' y='40' font-size='40'%3E%E2%9B%8F%EF%B8%8F%3C/text%3E%3C/svg%3E") 0 30, auto !important;
+}
+
+.tool-seed, .tool-seed * {
+    cursor: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Ctext x='0' y='40' font-size='40'%3E%F0%9F%8C%B1%3C/text%3E%3C/svg%3E") 0 30, auto !important;
+}

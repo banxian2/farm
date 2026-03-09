@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Farm</string>
+    <string name="title_farm">Farm</string>
+    <string name="title_friend">Friend</string>
+    <string name="title_me">Me</string>
+</resources>
